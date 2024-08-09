@@ -1,0 +1,12 @@
+##################################################
+ Thank you for installing "{{ .Chart.Name }}".
+ Your release is named "{{ .Release.Name }}".
+ Your project namespace "{{ .Release.Namespace }}"
+ To learn more about the release, try:
+##################################################
+
+helm status {{ .Release.Name }}
+helm get all {{ .Release.Name }}
+helm ls -n {{ .Release.Name }}
+helm upgrade  {{ .Release.Name }} -n {{.Release.Namespace }}
+helm uninstall {{ .Release.Name }} -n {{.Release.Namespace }}

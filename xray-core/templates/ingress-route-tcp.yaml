@@ -1,0 +1,28 @@
+{{- if .Values.ingressRouteTCP.enabled -}}
+{{- $fullName := include "xray-core.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "xray-core.labels" . | nindent 4 }}
+  {{- with .Values.ingressRouteTCP.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  entryPoints: {{ .Values.ingressRouteTCP.entryPoints }}
+  routes:
+    - match: {{ .Values.ingressRouteTCP.match }}
+      priority: {{ .Values.ingressRouteTCP.priority }}
+      services:
+        - name: {{ $fullName }}
+          port: {{ .Values.service.port }}
+  tls:
+    secretName: {{ $fullName -}}-tls-secret-replica
+    passthrough: true
+
+{{- end }}

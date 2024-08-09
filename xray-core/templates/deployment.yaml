@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "xray-core.fullname" . }}
+  labels:
+    {{- include "xray-core.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "xray-core.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "xray-core.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "xray-core.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: xray-tcp
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          
+          volumeMounts:
+            - mountPath: /etc/xray/config.json
+              name: config-json
+              readOnly: true
+              subPath: config.json
+            - mountPath: /etc/letsencrypt/private/tls.key
+              name: tls-key
+              subPath: tls.key
+              readOnly: true
+            - mountPath: /etc/letsencrypt/certs/tls.crt
+              name: tls-crt
+              subPath: tls.crt
+              readOnly: true          
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: config-json
+          configMap:
+            name: {{ include "xray-core.fullname" . }}-config-json
+        - name: tls-key
+          secret:
+            secretName: {{ include "xray-core.fullname" . }}-tls-secret-replica
+            items:
+              - key: tls.key
+                path: tls.key
+        - name: tls-crt
+          secret:
+            secretName: {{ include "xray-core.fullname" . }}-tls-secret-replica
+            items:
+              - key: tls.crt
+                path: tls.crt            
+      {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.hosts }}
+          {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.dns }}
+         {{- toYaml . | nindent 6 }}
+      {{- end }}
+

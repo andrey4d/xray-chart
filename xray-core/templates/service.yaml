@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "xray-core.fullname" . }}
+  labels:
+    {{- include "xray-core.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: xray-tcp
+      protocol: TCP
+      name: xray-tcp
+  selector:
+    {{- include "xray-core.selectorLabels" . | nindent 4 }}
