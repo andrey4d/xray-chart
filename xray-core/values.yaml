@@ -166,8 +166,8 @@ configJson: |
                       "certificates": [
                           {
                               "ocspStapling": 3600,
-                              "certificateFile": "/etc/ssl/private/fullchain.cer",
-                              "keyFile": "/etc/ssl/private/private.key"
+                              "certificateFile": "/etc/letsencrypt/certs/tls.crt",
+                              "keyFile": "/etc/letsencrypt/private/tls.key" 
                           }
                       ]
                   }
