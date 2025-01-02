@@ -4,6 +4,8 @@ metadata:
   name: {{ include "xray-core.fullname" . }}
   labels:
     {{- include "xray-core.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.annotations }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
