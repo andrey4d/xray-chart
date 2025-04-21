@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name:  {{ include "xray-core.fullname" . }}-certificate
+    labels:
+    {{- include "xray-core.labels" . | nindent 4 }}
+spec:
+  commonName: {{ .Values.certificate.commonName }}
+  secretName: {{ include "xray-core.fullname" . }}-tls-secret
+  dnsNames: 
+    {{ toYaml .Values.certificate.dnsNames | indent 4 }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: cert-manager-webhook-duckdns-production

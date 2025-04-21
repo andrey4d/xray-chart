@@ -4,8 +4,10 @@ metadata:
   name: {{ include "xray-core.fullname" . }}
   labels:
     {{- include "xray-core.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
   annotations:
-    {{- with .Values.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -67,13 +69,13 @@ spec:
             name: {{ include "xray-core.fullname" . }}-config-json
         - name: tls-key
           secret:
-            secretName: {{ include "xray-core.fullname" . }}-tls-secret-replica
+            secretName: {{ include "xray-core.fullname" . }}-tls-secret
             items:
               - key: tls.key
                 path: tls.key
         - name: tls-crt
           secret:
-            secretName: {{ include "xray-core.fullname" . }}-tls-secret-replica
+            secretName: {{{ include "xray-core.fullname" . }}-tls-secret
             items:
               - key: tls.crt
                 path: tls.crt            
@@ -98,4 +100,3 @@ spec:
       {{- with .Values.dns }}
          {{- toYaml . | nindent 6 }}
       {{- end }}
-

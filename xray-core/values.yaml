@@ -105,18 +105,13 @@ dns:
   # dnsConfig:
   #   nameservers: [8.8.8.8]
 
-tlsSecret:
-  annotations: 
-    # Use "kubernetes-replicator" annotation for copy certificate from another namespace
-    # https://github.com/mittwald/kubernetes-replicator
-    replicator.v1.mittwald.de/replicate-from: cert-manager/tls-www-example-com
-  key: ""
-  crt: ""
 
+certificate:
+  commonName: 
+  dnsNames: []
 
 # VLESS-TCP-XTLS-Vision
 # https://github.com/XTLS/Xray-examples/blob/main/VLESS-TCP-XTLS-Vision/config_server.json
-
 configJson: |
     {
       "log": {
