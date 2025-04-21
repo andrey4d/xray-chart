@@ -2,8 +2,8 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name:  {{ include "xray-core.fullname" . }}-certificate
-    labels:
+  name: {{ include "xray-core.fullname" . }}-certificate
+  labels:
     {{- include "xray-core.labels" . | nindent 4 }}
 spec:
   commonName: {{ .Values.certificate.commonName }}

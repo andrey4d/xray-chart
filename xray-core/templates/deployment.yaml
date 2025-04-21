@@ -60,7 +60,7 @@ spec:
               name: tls-crt
               subPath: tls.crt
               readOnly: true          
-          {{- with .Values.volumeMounts }}
+          {{- with .Values.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
@@ -75,7 +75,7 @@ spec:
                 path: tls.key
         - name: tls-crt
           secret:
-            secretName: {{{ include "xray-core.fullname" . }}-tls-secret
+            secretName: {{ include "xray-core.fullname" . }}-tls-secret
             items:
               - key: tls.crt
                 path: tls.crt            
